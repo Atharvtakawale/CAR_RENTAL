@@ -1,6 +1,10 @@
 package com.epps.carrental.matsers.location.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
+import com.epps.carrental.matsers.price.dto.PriceMasterDto;
+import com.epps.carrental.matsers.price.entity.PriceMaster;
 
 public class LocationMasterDto {
 
@@ -25,6 +29,16 @@ public class LocationMasterDto {
 	private LocalDate created_date;
 	
 	private LocalDate updated_date;
+	
+	private List<PriceMasterDto> priceMastersDtos;
+
+	public List<PriceMasterDto> getPriceMastersDtos() {
+		return priceMastersDtos;
+	}
+
+	public void setPriceMastersDtos(List<PriceMasterDto> priceMastersDtos) {
+		this.priceMastersDtos = priceMastersDtos;
+	}
 
 	public Integer getLocation_id() {
 		return location_id;

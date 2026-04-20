@@ -89,6 +89,10 @@ public class UserMasterService {
 
         List<Predicate> predicates = new ArrayList<>();
 
+        if (masterQueryDto.getUser_id() != null) {
+            predicates.add(cb.equal(root.get("user_id"), masterQueryDto.getUser_id()));
+        }
+        
         if (masterQueryDto.getEmail() != null && !masterQueryDto.getEmail().isEmpty()) {
             predicates.add(cb.like(root.get("email"), "%" + masterQueryDto.getEmail() + "%"));
         }

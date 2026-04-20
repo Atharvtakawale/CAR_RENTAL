@@ -1,14 +1,19 @@
 package com.epps.carrental.matsers.location.entity;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
 
+import com.epps.carrental.matsers.price.entity.PriceMaster;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -40,6 +45,9 @@ public class LocationMaster {
 	private LocalDate created_date;
 	
 	private LocalDate updated_date;
+	
+    @OneToMany(mappedBy = "locationMaster", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PriceMaster> priceMasters;
 
 	public Integer getLocation_id() {
 		return location_id;
@@ -127,5 +135,13 @@ public class LocationMaster {
 
 	public void setUpdated_date(LocalDate updated_date) {
 		this.updated_date = updated_date;
+	}
+
+	public List<PriceMaster> getPriceMasters() {
+		return priceMasters;
+	}
+
+	public void setPriceMasters(List<PriceMaster> priceMasters) {
+		this.priceMasters = priceMasters;
 	}
 }

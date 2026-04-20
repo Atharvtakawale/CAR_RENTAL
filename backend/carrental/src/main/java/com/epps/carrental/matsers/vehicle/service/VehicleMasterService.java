@@ -81,6 +81,10 @@ public class VehicleMasterService {
 
 	        List<Predicate> predicates = new ArrayList<>();
 
+	        if (masterQueryDto.getVehicle_id() != null) {
+	            predicates.add(cb.equal(root.get("vehicle_id"), masterQueryDto.getVehicle_id()));
+	        }
+	        
 	        if (masterQueryDto.getModel() != null && !masterQueryDto.getModel().isEmpty()) {
 	            predicates.add(cb.like(root.get("model"), "%" + masterQueryDto.getModel() + "%"));
 	        }
