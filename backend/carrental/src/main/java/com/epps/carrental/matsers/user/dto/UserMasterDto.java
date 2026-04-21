@@ -4,54 +4,68 @@ import java.time.LocalDate;
 
 import com.epps.carrental.matsers.user.entity.Role;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 public class UserMasterDto {
 
-	private Integer user_id;
+	private Integer userId;	
 
-	private String user_name;
+	private String userName;
 
 	private String email;
+	
+	private String password;
 
-	private Long phone_number;
+	private Long phoneNumber;
 
-	private String license_number;
+	private String licenseNumber;
 
+	@Enumerated(EnumType.STRING)
 	private Role role;
-	
-	private LocalDate created_date;
-	
-	private LocalDate updated_date;
 
-	public Integer getUser_id() {
-		return user_id;
+	private LocalDate createdDate;
+
+	private LocalDate updatedDate;
+
+	public Integer getUserId() {
+		return userId;
 	}
 
-	public void setUser_id(Integer user_id) {
-		this.user_id = user_id;
+	public void setUserId(Integer userId) {
+		this.userId = userId;
 	}
 
-	public String getUser_name() {
-		return user_name;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
-	public Long getPhone_number() {
-		return phone_number;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setPhone_number(Long phone_number) {
-		this.phone_number = phone_number;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public String getLicense_number() {
-		return license_number;
+	public Long getPhoneNumber() {
+		return phoneNumber;
 	}
 
-	public void setLicense_number(String license_number) {
-		this.license_number = license_number;
+	public void setPhoneNumber(Long phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	public String getLicenseNumber() {
+		return licenseNumber;
+	}
+
+	public void setLicenseNumber(String licenseNumber) {
+		this.licenseNumber = licenseNumber;
 	}
 
 	public Role getRole() {
@@ -62,27 +76,27 @@ public class UserMasterDto {
 		this.role = role;
 	}
 
-	public LocalDate getCreated_date() {
-		return created_date;
+	public LocalDate getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setCreated_date(LocalDate created_date) {
-		this.created_date = created_date;
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
 	}
 
-	public LocalDate getUpdated_date() {
-		return updated_date;
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
 	}
 
-	public void setUpdated_date(LocalDate updated_date) {
-		this.updated_date = updated_date;
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
-	public String getEmail() {
-		return email;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setEmail(String email) {
-		this.email = email;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 }

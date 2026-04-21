@@ -8,7 +8,9 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.epps.carrental.matsers.location.entity.LocationMaster;
 import com.epps.carrental.matsers.vehicle.entity.VEHICLE_TYPE;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,100 +26,118 @@ public class PriceMaster {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer price_id;
+	@Column(name = "price_id")
+	private Integer priceId;
 
-	private VEHICLE_TYPE vehicle_type; 
+	@Column(name = "vehicle_type")
+	private VEHICLE_TYPE vehicleType;
 
-	private Double base_price_per_day;
+	@Column(name = "base_price_per_day")
+	private Double basePricePerDay;
 
-	private Double price_per_hour;
+	@Column(name = "price_per_hour")
+	private Double pricePerHour;
 
-	private Double weekend_price;
+	@Column(name = "weekend_price")
+	private Double weekendPrice;
 
-	private Double holiday_price;
+	@Column(name = "holiday_price")
+	private Double holidayPrice;
 
-	private Double security_deposit;
+	@Column(name = "security_deposit")
+	private Double securityDeposit;
 
-	private Boolean is_active;
-	
-	private LocalDate created_date;
+	@Column(name = "is_active")
+	private Boolean isActive;
 
-	private LocalDate updated_date;
-	
-	@ManyToOne	
-    @JoinColumn(name = "location_id")
+	@Column(name = "created_date")
+	private LocalDate createdDate;
+
+	@Column(name = "updated_date")
+	private LocalDate updatedDate;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "location_id")
 	private LocationMaster locationMaster;
 
-	public Integer getPrice_id() {
-		return price_id;
+	public Integer getPriceId() {
+		return priceId;
 	}
 
-	public void setPrice_id(Integer price_id) {
-		this.price_id = price_id;
+	public void setPriceId(Integer priceId) {
+		this.priceId = priceId;
 	}
 
-	public Double getBase_price_per_day() {
-		return base_price_per_day;
+	public VEHICLE_TYPE getVehicleType() {
+		return vehicleType;
 	}
 
-	public void setBase_price_per_day(Double base_price_per_day) {
-		this.base_price_per_day = base_price_per_day;
+	public void setVehicleType(VEHICLE_TYPE vehicleType) {
+		this.vehicleType = vehicleType;
 	}
 
-	public Double getPrice_per_hour() {
-		return price_per_hour;
+	public Double getBasePricePerDay() {
+		return basePricePerDay;
 	}
 
-	public void setPrice_per_hour(Double price_per_hour) {
-		this.price_per_hour = price_per_hour;
+	public void setBasePricePerDay(Double basePricePerDay) {
+		this.basePricePerDay = basePricePerDay;
 	}
 
-	public Double getWeekend_price() {
-		return weekend_price;
+	public Double getPricePerHour() {
+		return pricePerHour;
 	}
 
-	public void setWeekend_price(Double weekend_price) {
-		this.weekend_price = weekend_price;
+	public void setPricePerHour(Double pricePerHour) {
+		this.pricePerHour = pricePerHour;
 	}
 
-	public Double getHoliday_price() {
-		return holiday_price;
+	public Double getWeekendPrice() {
+		return weekendPrice;
 	}
 
-	public void setHoliday_price(Double holiday_price) {
-		this.holiday_price = holiday_price;
+	public void setWeekendPrice(Double weekendPrice) {
+		this.weekendPrice = weekendPrice;
 	}
 
-	public Double getSecurity_deposit() {
-		return security_deposit;
+	public Double getHolidayPrice() {
+		return holidayPrice;
 	}
 
-	public void setSecurity_deposit(Double security_deposit) {
-		this.security_deposit = security_deposit;
+	public void setHolidayPrice(Double holidayPrice) {
+		this.holidayPrice = holidayPrice;
 	}
 
-	public Boolean getIs_active() {
-		return is_active;
+	public Double getSecurityDeposit() {
+		return securityDeposit;
 	}
 
-	public void setIs_active(Boolean is_active) {
-		this.is_active = is_active;
+	public void setSecurityDeposit(Double securityDeposit) {
+		this.securityDeposit = securityDeposit;
 	}
 
-	public LocalDate getCreated_date() {
-		return created_date;
+	public Boolean getIsActive() {
+		return isActive;
 	}
 
-	public void setCreated_date(LocalDate created_date) {
-		this.created_date = created_date;
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
 	}
 
-	public LocalDate getUpdated_date() {
-		return updated_date;
+	public LocalDate getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setUpdated_date(LocalDate updated_date) {
-		this.updated_date = updated_date;
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 	public LocationMaster getLocationMaster() {
@@ -127,13 +147,7 @@ public class PriceMaster {
 	public void setLocationMaster(LocationMaster locationMaster) {
 		this.locationMaster = locationMaster;
 	}
-
-	public VEHICLE_TYPE getVehicle_type() {
-		return vehicle_type;
-	}
+		
 	
-	public void setVehicle_type(VEHICLE_TYPE vehicle_type) {
-		this.vehicle_type = vehicle_type;
-	}
 }
 	

@@ -2,43 +2,19 @@ package com.epps.carrental.matsers.location.dto;
 
 public class LocationMasterQueryDto {
 
-	private Integer location_id;
-	
-	private String location_name;
-	
-	private Integer is_active;
-	
-    private Integer pageNo;
-    
-    private Integer pageSize;
+	private Integer locationId;
 
-    private String sortBy;
-    
-    private String sortDirection;
+	private String locationName;
 
-	public Integer getLocation_id() {
-		return location_id;
-	}
+	private Integer isActive;
 
-	public void setLocation_id(Integer location_id) {
-		this.location_id = location_id;
-	}
+	private Integer pageNo;
 
-	public String getLocation_name() {
-		return location_name;
-	}
+	private Integer pageSize;
 
-	public void setLocation_name(String location_name) {
-		this.location_name = location_name;
-	}
+	private String sortBy;
 
-	public Integer getIs_active() {
-		return is_active;
-	}
-
-	public void setIs_active(Integer is_active) {
-		this.is_active = is_active;
-	}
+	private String sortDirection;
 
 	public Integer getPageNo() {
 		return pageNo;
@@ -70,5 +46,29 @@ public class LocationMasterQueryDto {
 
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
-	} 
+	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	}
+
+	public String getLocationName() {
+		return locationName;
+	}
+
+	public void setLocationName(String locationName) {
+		this.locationName = locationName;
+	}
+
+	public Integer getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Integer isActive) {
+		this.isActive = isActive;
+	}
 }

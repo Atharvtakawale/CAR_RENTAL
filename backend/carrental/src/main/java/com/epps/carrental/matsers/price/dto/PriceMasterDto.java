@@ -6,113 +6,115 @@ import com.epps.carrental.matsers.vehicle.entity.VEHICLE_TYPE;
 
 public class PriceMasterDto {
 
-	private Integer price_id;
+	private Integer priceId;
 
-	private VEHICLE_TYPE vehicle_type; 
+	private VEHICLE_TYPE vehicleType;
 
-	private Double base_price_per_day;
+	private Double basePricePerDay;
 
-	private Double price_per_hour;
+	private Double pricePerHour;
 
-	private Double weekend_price;
+	private Double weekendPrice;
 
-	private Double holiday_price;
+	private Double holidayPrice;
 
-	private Double security_deposit;
+	private Double securityDeposit;
 
-	private Boolean is_active;
+	private Boolean isActive;
+
+	private LocalDate createdDate;
+
+	private LocalDate updatedDate;
 	
-	private LocalDate created_date;
+	private Integer locationId;
 
-	private LocalDate updated_date;
+	public Integer getPriceId() {
+		return priceId;
+	}
+
+	public void setPriceId(Integer priceId) {
+		this.priceId = priceId;
+	}
+
+	public VEHICLE_TYPE getVehicleType() {
+		return vehicleType;
+	}
+
+	public void setVehicleType(VEHICLE_TYPE vehicleType) {
+		this.vehicleType = vehicleType;
+	}
+
+	public Double getBasePricePerDay() {
+		return basePricePerDay;
+	}
+
+	public void setBasePricePerDay(Double basePricePerDay) {
+		this.basePricePerDay = basePricePerDay;
+	}
+
+	public Double getPricePerHour() {
+		return pricePerHour;
+	}
+
+	public void setPricePerHour(Double pricePerHour) {
+		this.pricePerHour = pricePerHour;
+	}
+
+	public Double getWeekendPrice() {
+		return weekendPrice;
+	}
+
+	public void setWeekendPrice(Double weekendPrice) {
+		this.weekendPrice = weekendPrice;
+	}
+
+	public Double getHolidayPrice() {
+		return holidayPrice;
+	}
+
+	public void setHolidayPrice(Double holidayPrice) {
+		this.holidayPrice = holidayPrice;
+	}
+
+	public Double getSecurityDeposit() {
+		return securityDeposit;
+	}
+
+	public void setSecurityDeposit(Double securityDeposit) {
+		this.securityDeposit = securityDeposit;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public LocalDate getCreatedDate() {
+		return createdDate;
+	}
+
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
+	}
+
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
+	}
+
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
+	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
+	} 
 	
-	private Integer location_id; 
-
-	public Integer getPrice_id() {
-		return price_id;
-	}
-
-	public void setPrice_id(Integer price_id) {
-		this.price_id = price_id;
-	}
-
-	public VEHICLE_TYPE getVehicle_type() {
-		return vehicle_type;
-	}
-
-	public void setVehicle_type(VEHICLE_TYPE vehicle_type) {
-		this.vehicle_type = vehicle_type;
-	}
-
-	public Double getBase_price_per_day() {
-		return base_price_per_day;
-	}
-
-	public void setBase_price_per_day(Double base_price_per_day) {
-		this.base_price_per_day = base_price_per_day;
-	}
-
-	public Double getPrice_per_hour() {
-		return price_per_hour;
-	}
-
-	public void setPrice_per_hour(Double price_per_hour) {
-		this.price_per_hour = price_per_hour;
-	}
-
-	public Double getWeekend_price() {
-		return weekend_price;
-	}
-
-	public void setWeekend_price(Double weekend_price) {
-		this.weekend_price = weekend_price;
-	}
-
-	public Double getHoliday_price() {
-		return holiday_price;
-	}
-
-	public void setHoliday_price(Double holiday_price) {
-		this.holiday_price = holiday_price;
-	}
-
-	public Double getSecurity_deposit() {
-		return security_deposit;
-	}
-
-	public void setSecurity_deposit(Double security_deposit) {
-		this.security_deposit = security_deposit;
-	}
-
-	public Boolean getIs_active() {
-		return is_active;
-	}
-
-	public void setIs_active(Boolean is_active) {
-		this.is_active = is_active;
-	}
-
-	public LocalDate getCreated_date() {
-		return created_date;
-	}
-
-	public void setCreated_date(LocalDate created_date) {
-		this.created_date = created_date;
-	}
-
-	public LocalDate getUpdated_date() {
-		return updated_date;
-	}
-
-	public void setUpdated_date(LocalDate updated_date) {
-		this.updated_date = updated_date;
-	}
-
-	public Integer getLocation_id() {
-		return location_id;
-	}
-
-	public void setLocation_id(Integer location_id) {
-		this.location_id = location_id;
-	}
+	
 }

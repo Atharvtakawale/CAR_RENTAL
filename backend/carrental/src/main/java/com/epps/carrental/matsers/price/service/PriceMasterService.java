@@ -22,267 +22,243 @@ import jakarta.validation.Valid;
 
 @Service
 public class PriceMasterService {
-	
-	@Autowired
-	private PriceMasterDao priceMasterDao;
 
-	@Autowired
-	private EntityManager entityManager;
-	
-	@Autowired
-	private LocationMasterDao locationMasterDao;
+    @Autowired
+    private PriceMasterDao priceMasterDao;
 
-	public List<PriceMasterDto> savePriceMaster(@Valid List<PriceMasterDto> priceMasterDtos) {
+    @Autowired
+    private EntityManager entityManager;
 
-	    if (priceMasterDtos == null || priceMasterDtos.isEmpty()) {
-	        throw new IllegalArgumentException("PriceMaster list cannot be empty");
-	    }
+    @Autowired
+    private LocationMasterDao locationMasterDao;
 
-	    List<PriceMaster> entityList = new ArrayList<>();
+    // ================= SAVE =================
+    public List<PriceMasterDto> savePriceMaster(@Valid List<PriceMasterDto> priceMasterDtos) {
 
-	    for (PriceMasterDto dto : priceMasterDtos) {
-
-	        PriceMaster price = new PriceMaster();
-
-	        price.setVehicle_type(dto.getVehicle_type());
-	        price.setBase_price_per_day(dto.getBase_price_per_day());
-	        price.setPrice_per_hour(dto.getPrice_per_hour());
-	        price.setWeekend_price(dto.getWeekend_price());
-	        price.setHoliday_price(dto.getHoliday_price());
-	        price.setSecurity_deposit(dto.getSecurity_deposit());
-	        price.setIs_active(dto.getIs_active());
-	        price.setCreated_date(dto.getCreated_date());
-	        price.setUpdated_date(dto.getUpdated_date());
-
-	        if (dto.getLocation_id() != null) {
-
-	            LocationMaster location = locationMasterDao.findById(dto.getLocation_id())
-	                    .orElseThrow(() -> new RuntimeException(
-	                            "Location not found with id: " + dto.getLocation_id()));
-
-	            price.setLocationMaster(location);
-	        } else {
-	            throw new RuntimeException("Location ID is required for PriceMaster");
-	        }
-
-	        entityList.add(price);
-	    }
-
-	    List<PriceMaster> savedList = priceMasterDao.saveAll(entityList);
-
-	    List<PriceMasterDto> result = new ArrayList<>();
-
-	    for (PriceMaster saved : savedList) {
-
-	        PriceMasterDto dto = new PriceMasterDto();
-	
-	        dto.setPrice_id(saved.getPrice_id());
-	        dto.setVehicle_type(saved.getVehicle_type());
-	        dto.setBase_price_per_day(saved.getBase_price_per_day());
-	        dto.setPrice_per_hour(saved.getPrice_per_hour());
-	        dto.setWeekend_price(saved.getWeekend_price());
-	        dto.setHoliday_price(saved.getHoliday_price());
-	        dto.setSecurity_deposit(saved.getSecurity_deposit());
-	        dto.setIs_active(saved.getIs_active());
-	        dto.setCreated_date(saved.getCreated_date());
-	        dto.setUpdated_date(saved.getUpdated_date());
-
-	        if (saved.getLocationMaster() != null) {
-	            dto.setLocation_id(saved.getLocationMaster().getLocation_id());
-	        }
-
-	        result.add(dto);
-	    }
-
-	    return result;
-	}
-
-	public long getPriceMasterDataCount(@Valid PriceMasterQuerydto masterQueryDto) {
-
-	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-
-	    Root<PriceMaster> root = cq.from(PriceMaster.class);	
-
-	    cq.select(cb.countDistinct(root));
-
-	    List<Predicate> predicates = new ArrayList<>();
-
-	    if (masterQueryDto.getVehicle_type() != null) {
-	        predicates.add(cb.equal(root.get("vehicle_type"), masterQueryDto.getVehicle_type()));
-	    }
-
-	    if (masterQueryDto.getIs_active() != null) {
-	        predicates.add(cb.equal(root.get("is_active"), masterQueryDto.getIs_active()));
-	    }
-
-	    if (masterQueryDto.getLocation_id() != null) {
-	        predicates.add(cb.equal(root.get("locationMaster").get("location_id"),
-	                masterQueryDto.getLocation_id()));
-	    }
-
-	    cq.where(predicates.toArray(new Predicate[0]));
-
-	    return entityManager.createQuery(cq).getSingleResult();
-	}
-
-	public List<PriceMasterDto> getPriceMasterDataList(@Valid PriceMasterQuerydto masterQueryDto) {
-
-	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	    CriteriaQuery<PriceMaster> cq = cb.createQuery(PriceMaster.class);
-
-	    Root<PriceMaster> root = cq.from(PriceMaster.class);
-
-	    List<Predicate> predicates = new ArrayList<>();
-
-	    if (masterQueryDto.getPrice_id() != null) {
-            predicates.add(cb.equal(root.get("price_id"), masterQueryDto.getPrice_id()));
+        if (priceMasterDtos == null || priceMasterDtos.isEmpty()) {
+            throw new IllegalArgumentException("PriceMaster list cannot be empty");
         }
-	    
-	    if (masterQueryDto.getVehicle_type() != null) {
-	        predicates.add(cb.equal(root.get("vehicle_type"), masterQueryDto.getVehicle_type()));
-	    }
 
-	    if (masterQueryDto.getIs_active() != null) {
-	        predicates.add(cb.equal(root.get("is_active"), masterQueryDto.getIs_active()));
-	    }
+        List<PriceMaster> entityList = new ArrayList<>();
 
-	    if (masterQueryDto.getLocation_id() != null) {
-	        predicates.add(cb.equal(root.get("locationMaster").get("location_id"),
-	                masterQueryDto.getLocation_id()));
-	    }
+        for (PriceMasterDto dto : priceMasterDtos) {
 
-	    cq.where(predicates.toArray(new Predicate[0]));
+            PriceMaster price = new PriceMaster();
 
-	    if (masterQueryDto.getSortBy() != null) {
-	        if ("desc".equalsIgnoreCase(masterQueryDto.getSortDirection())) {
-	            cq.orderBy(cb.desc(root.get(masterQueryDto.getSortBy())));
-	        } else {
-	            cq.orderBy(cb.asc(root.get(masterQueryDto.getSortBy())));
-	        }
-	    }
+            price.setVehicleType(dto.getVehicleType());
+            price.setBasePricePerDay(dto.getBasePricePerDay());
+            price.setPricePerHour(dto.getPricePerHour());
+            price.setWeekendPrice(dto.getWeekendPrice());
+            price.setHolidayPrice(dto.getHolidayPrice());
+            price.setSecurityDeposit(dto.getSecurityDeposit());
+            price.setIsActive(dto.getIsActive());
+            price.setCreatedDate(dto.getCreatedDate());
+            price.setUpdatedDate(dto.getUpdatedDate());
 
-	    var query = entityManager.createQuery(cq);
+            if (dto.getLocationId() != null) {
+                LocationMaster location = locationMasterDao.findById(dto.getLocationId())
+                        .orElseThrow(() -> new RuntimeException("Location not found"));
+                price.setLocationMaster(location);
+            } else {
+                throw new RuntimeException("Location ID is required");
+            }
 
-	    if (masterQueryDto.getPageNo() != null && masterQueryDto.getPageSize() != null) {
-	        int pageNo = masterQueryDto.getPageNo();
-	        int pageSize = masterQueryDto.getPageSize();
+            entityList.add(price);
+        }
 
-	        query.setFirstResult(pageNo * pageSize);
-	        query.setMaxResults(pageSize);
-	    }
+        List<PriceMaster> savedList = priceMasterDao.saveAll(entityList);
 
-	    List<PriceMaster> resultList = query.getResultList();
+        List<PriceMasterDto> result = new ArrayList<>();
 
-	    List<PriceMasterDto> dtoList = new ArrayList<>();
+        for (PriceMaster saved : savedList) {
 
-	    for (PriceMaster price : resultList) {
+            PriceMasterDto dto = new PriceMasterDto();
 
-	        PriceMasterDto dto = new PriceMasterDto();
+            dto.setPriceId(saved.getPriceId());
+            dto.setVehicleType(saved.getVehicleType());
+            dto.setBasePricePerDay(saved.getBasePricePerDay());
+            dto.setPricePerHour(saved.getPricePerHour());
+            dto.setWeekendPrice(saved.getWeekendPrice());
+            dto.setHolidayPrice(saved.getHolidayPrice());
+            dto.setSecurityDeposit(saved.getSecurityDeposit());
+            dto.setIsActive(saved.getIsActive());
+            dto.setCreatedDate(saved.getCreatedDate());
+            dto.setUpdatedDate(saved.getUpdatedDate());
 
-	        dto.setPrice_id(price.getPrice_id());
-	        dto.setVehicle_type(price.getVehicle_type());
-	        dto.setBase_price_per_day(price.getBase_price_per_day());
-	        dto.setPrice_per_hour(price.getPrice_per_hour());
-	        dto.setWeekend_price(price.getWeekend_price());
-	        dto.setHoliday_price(price.getHoliday_price());
-	        dto.setSecurity_deposit(price.getSecurity_deposit());
-	        dto.setIs_active(price.getIs_active());
-	        dto.setCreated_date(price.getCreated_date());
-	        dto.setUpdated_date(price.getUpdated_date());
+            if (saved.getLocationMaster() != null) {
+                dto.setLocationId(saved.getLocationMaster().getLocationId());
+            }
 
-	        if (price.getLocationMaster() != null) {
-	            dto.setLocation_id(price.getLocationMaster().getLocation_id());
-	        }
+            result.add(dto);
+        }
 
-	        dtoList.add(dto);
-	    }
+        return result;
+    }
 
-	    return dtoList;
-	}
+    // ================= COUNT =================
+    public long getPriceMasterDataCount(@Valid PriceMasterQuerydto masterQueryDto) {
 
-	public List<PriceMasterDto> updatePriceMaster(@Valid List<PriceMasterDto> priceMasterDtos) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
-	    if (priceMasterDtos == null || priceMasterDtos.isEmpty()) {
-	        throw new IllegalArgumentException("PriceMaster list cannot be empty");
-	    }
+        Root<PriceMaster> root = cq.from(PriceMaster.class);
 
-	    List<PriceMasterDto> updatedList = new ArrayList<>();
+        cq.select(cb.countDistinct(root));
 
-	    for (PriceMasterDto dto : priceMasterDtos) {
+        List<Predicate> predicates = new ArrayList<>();
 
-	        if (dto.getPrice_id() == null) {
-	            throw new RuntimeException("Price ID is required for update");
-	        }
+        if (masterQueryDto.getVehicleType() != null) {
+            predicates.add(cb.equal(root.get("vehicleType"), masterQueryDto.getVehicleType()));
+        }
 
-	        PriceMaster price = priceMasterDao.findById(dto.getPrice_id())
-	                .orElseThrow(() -> new RuntimeException(
-	                        "PriceMaster not found with id: " + dto.getPrice_id()));
+        if (masterQueryDto.getIsActive() != null) {
+            predicates.add(cb.equal(root.get("isActive"), masterQueryDto.getIsActive()));
+        }
 
-	        if (dto.getVehicle_type() != null) {
-	            price.setVehicle_type(dto.getVehicle_type());
-	        }
+        if (masterQueryDto.getLocationId() != null) {
+            predicates.add(cb.equal(root.get("locationMaster").get("location_id"),
+                    masterQueryDto.getLocationId()));
+        }
 
-	        if (dto.getBase_price_per_day() != null) {
-	            price.setBase_price_per_day(dto.getBase_price_per_day());
-	        }
+        cq.where(predicates.toArray(new Predicate[0]));
 
-	        if (dto.getPrice_per_hour() != null) {
-	            price.setPrice_per_hour(dto.getPrice_per_hour());
-	        }
+        return entityManager.createQuery(cq).getSingleResult();
+    }
 
-	        if (dto.getWeekend_price() != null) {
-	            price.setWeekend_price(dto.getWeekend_price());
-	        }
+    // ================= LIST =================
+    public List<PriceMasterDto> getPriceMasterDataList(@Valid PriceMasterQuerydto masterQueryDto) {
 
-	        if (dto.getHoliday_price() != null) {
-	            price.setHoliday_price(dto.getHoliday_price());
-	        }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<PriceMaster> cq = cb.createQuery(PriceMaster.class);
 
-	        if (dto.getSecurity_deposit() != null) {
-	            price.setSecurity_deposit(dto.getSecurity_deposit());
-	        }
+        Root<PriceMaster> root = cq.from(PriceMaster.class);
 
-	        if (dto.getIs_active() != null) {
-	            price.setIs_active(dto.getIs_active());
-	        }
+        List<Predicate> predicates = new ArrayList<>();
 
-	        if (dto.getUpdated_date() != null) {
-	            price.setUpdated_date(dto.getUpdated_date());
-	        }
+        if (masterQueryDto.getPriceId() != null) {
+            predicates.add(cb.equal(root.get("priceId"), masterQueryDto.getPriceId()));
+        }
 
-	        if (dto.getLocation_id() != null) {
+        if (masterQueryDto.getVehicleType() != null) {
+            predicates.add(cb.equal(root.get("vehicleType"), masterQueryDto.getVehicleType()));
+        }
 
-	            LocationMaster location = locationMasterDao.findById(dto.getLocation_id())
-	                    .orElseThrow(() -> new RuntimeException(
-	                            "Location not found with id: " + dto.getLocation_id()));
+        if (masterQueryDto.getIsActive() != null) {
+            predicates.add(cb.equal(root.get("isActive"), masterQueryDto.getIsActive()));
+        }
 
-	            price.setLocationMaster(location);
-	        }
+        if (masterQueryDto.getLocationId() != null) {
+            predicates.add(cb.equal(root.get("locationMaster").get("location_id"),
+                    masterQueryDto.getLocationId()));
+        }
 
-	        PriceMaster saved = priceMasterDao.save(price);
+        cq.where(predicates.toArray(new Predicate[0]));
 
-	        PriceMasterDto updatedDto = new PriceMasterDto();
+        var query = entityManager.createQuery(cq);
 
-	        updatedDto.setPrice_id(saved.getPrice_id());
-	        updatedDto.setVehicle_type(saved.getVehicle_type());
-	        updatedDto.setBase_price_per_day(saved.getBase_price_per_day());
-	        updatedDto.setPrice_per_hour(saved.getPrice_per_hour());
-	        updatedDto.setWeekend_price(saved.getWeekend_price());
-	        updatedDto.setHoliday_price(saved.getHoliday_price());
-	        updatedDto.setSecurity_deposit(saved.getSecurity_deposit());
-	        updatedDto.setIs_active(saved.getIs_active());
-	        updatedDto.setCreated_date(saved.getCreated_date());
-	        updatedDto.setUpdated_date(saved.getUpdated_date());
+        List<PriceMaster> resultList = query.getResultList();
 
-	        if (saved.getLocationMaster() != null) {
-	            updatedDto.setLocation_id(saved.getLocationMaster().getLocation_id());
-	        }
+        List<PriceMasterDto> dtoList = new ArrayList<>();
 
-	        updatedList.add(updatedDto);
-	    }
+        for (PriceMaster price : resultList) {
 
-	    return updatedList;
-	}
+            PriceMasterDto dto = new PriceMasterDto();
 
+            dto.setPriceId(price.getPriceId());
+            dto.setVehicleType(price.getVehicleType());
+            dto.setBasePricePerDay(price.getBasePricePerDay());
+            dto.setPricePerHour(price.getPricePerHour());
+            dto.setWeekendPrice(price.getWeekendPrice());
+            dto.setHolidayPrice(price.getHolidayPrice());
+            dto.setSecurityDeposit(price.getSecurityDeposit());
+            dto.setIsActive(price.getIsActive());
+            dto.setCreatedDate(price.getCreatedDate());
+            dto.setUpdatedDate(price.getUpdatedDate());
+
+            if (price.getLocationMaster() != null) {
+                dto.setLocationId(price.getLocationMaster().getLocationId());
+            }
+
+            dtoList.add(dto);
+        }
+
+        return dtoList;
+    }
+
+    // ================= UPDATE =================
+    public List<PriceMasterDto> updatePriceMaster(@Valid List<PriceMasterDto> priceMasterDtos) {
+
+        List<PriceMasterDto> updatedList = new ArrayList<>();
+
+        for (PriceMasterDto dto : priceMasterDtos) {
+
+            if (dto.getPriceId() == null) {
+                throw new RuntimeException("Price ID is required");
+            }
+
+            PriceMaster price = priceMasterDao.findById(dto.getPriceId())
+                    .orElseThrow(() -> new RuntimeException("Price not found"));
+
+            if (dto.getVehicleType() != null) {
+                price.setVehicleType(dto.getVehicleType());
+            }
+
+            if (dto.getBasePricePerDay() != null) {
+                price.setBasePricePerDay(dto.getBasePricePerDay());
+            }
+
+            if (dto.getPricePerHour() != null) {
+                price.setPricePerHour(dto.getPricePerHour());
+            }
+
+            if (dto.getWeekendPrice() != null) {
+                price.setWeekendPrice(dto.getWeekendPrice());
+            }
+
+            if (dto.getHolidayPrice() != null) {
+                price.setHolidayPrice(dto.getHolidayPrice());
+            }
+
+            if (dto.getSecurityDeposit() != null) {
+                price.setSecurityDeposit(dto.getSecurityDeposit());
+            }
+
+            if (dto.getIsActive() != null) {
+                price.setIsActive(dto.getIsActive());
+            }
+
+            if (dto.getUpdatedDate() != null) {
+                price.setUpdatedDate(dto.getUpdatedDate());
+            }
+
+            if (dto.getLocationId() != null) {
+                LocationMaster location = locationMasterDao.findById(dto.getLocationId())
+                        .orElseThrow(() -> new RuntimeException("Location not found"));
+                price.setLocationMaster(location);
+            }
+
+            PriceMaster saved = priceMasterDao.save(price);
+
+            PriceMasterDto updatedDto = new PriceMasterDto();
+
+            updatedDto.setPriceId(saved.getPriceId());
+            updatedDto.setVehicleType(saved.getVehicleType());
+            updatedDto.setBasePricePerDay(saved.getBasePricePerDay());
+            updatedDto.setPricePerHour(saved.getPricePerHour());
+            updatedDto.setWeekendPrice(saved.getWeekendPrice());
+            updatedDto.setHolidayPrice(saved.getHolidayPrice());
+            updatedDto.setSecurityDeposit(saved.getSecurityDeposit());
+            updatedDto.setIsActive(saved.getIsActive());
+            updatedDto.setCreatedDate(saved.getCreatedDate());
+            updatedDto.setUpdatedDate(saved.getUpdatedDate());
+
+            if (saved.getLocationMaster() != null) {
+                updatedDto.setLocationId(saved.getLocationMaster().getLocationId());
+            }
+
+            updatedList.add(updatedDto);
+        }
+
+        return updatedList;
+    }
 }

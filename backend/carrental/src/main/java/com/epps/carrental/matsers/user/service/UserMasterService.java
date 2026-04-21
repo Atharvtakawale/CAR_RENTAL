@@ -3,7 +3,6 @@ package com.epps.carrental.matsers.user.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,37 +23,31 @@ public class UserMasterService {
 
     @Autowired
     private UserMasterDao userMasterDao;
-    
+
     @Autowired
     private EntityManager entityManager;
 
-    public List<UserMasterDto> saveUserMaster(List<UserMasterDto> userMasterDtos) {
+    // ================= SAVE =================
+    public List<UserMasterDto> saveUserMaster(List<UserMasterDto> userDtos) {
 
-        if (userMasterDtos == null || userMasterDtos.isEmpty()) {
+        if (userDtos == null || userDtos.isEmpty()) {
             throw new IllegalArgumentException("User list cannot be empty");
         }
 
-        List<UserMaster> list = userMasterDtos.stream()
+        List<UserMaster> entityList = userDtos.stream()
                 .filter(dto -> dto != null)
-                .map(dto -> {
-                    UserMaster entity = new UserMaster();
-                    BeanUtils.copyProperties(dto, entity);
-                    return entity;
-                })
+                .map(this::mapToEntity)
                 .toList();
 
-        List<UserMaster> savedList = userMasterDao.saveAll(list);
+        List<UserMaster> savedList = userMasterDao.saveAll(entityList);
 
         return savedList.stream()
-                .map(entity -> {
-                    UserMasterDto dto = new UserMasterDto();	
-                    BeanUtils.copyProperties(entity, dto);
-                    return dto;
-                })
+                .map(this::mapToDto)
                 .toList();
     }
 
-    public long getUserMasterDataCount(UserMasterQueryDto masterQueryDto) {
+    // ================= COUNT =================
+    public long getUserMasterDataCount(UserMasterQueryDto queryDto) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> cq = cb.createQuery(Long.class);
@@ -63,24 +56,23 @@ public class UserMasterService {
 
         cq.select(cb.count(root));
 
-        Predicate predicate = cb.conjunction(); 
+        List<Predicate> predicates = new ArrayList<>();
 
-        if (masterQueryDto.getEmail() != null && !masterQueryDto.getEmail().isEmpty()) {
-            predicate = cb.and(predicate,
-                    cb.like(root.get("email"), "%" + masterQueryDto.getEmail() + "%"));
+        if (queryDto.getEmail() != null && !queryDto.getEmail().isEmpty()) {
+            predicates.add(cb.like(root.get("email"), "%" + queryDto.getEmail() + "%"));
         }
 
-        if (masterQueryDto.getUser_name() != null && !masterQueryDto.getUser_name().isEmpty()) {
-            predicate = cb.and(predicate,
-                    cb.like(root.get("name"), "%" + masterQueryDto.getUser_name() + "%"));
+        if (queryDto.getUserName() != null && !queryDto.getUserName().isEmpty()) {
+            predicates.add(cb.like(root.get("userName"), "%" + queryDto.getUserName() + "%"));
         }
 
-        cq.where(predicate);
+        cq.where(predicates.toArray(new Predicate[0]));
 
         return entityManager.createQuery(cq).getSingleResult();
     }
 
-    public List<UserMasterDto> getUserMasterDataList(UserMasterQueryDto masterQueryDto) {
+    // ================= LIST =================
+    public List<UserMasterDto> getUserMasterDataList(UserMasterQueryDto queryDto) {
 
         CriteriaBuilder cb = entityManager.getCriteriaBuilder();
         CriteriaQuery<UserMaster> cq = cb.createQuery(UserMaster.class);
@@ -89,117 +81,111 @@ public class UserMasterService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (masterQueryDto.getUser_id() != null) {
-            predicates.add(cb.equal(root.get("user_id"), masterQueryDto.getUser_id()));
-        }
-        
-        if (masterQueryDto.getEmail() != null && !masterQueryDto.getEmail().isEmpty()) {
-            predicates.add(cb.like(root.get("email"), "%" + masterQueryDto.getEmail() + "%"));
+        if (queryDto.getUserId() != null) {
+            predicates.add(cb.equal(root.get("userId"), queryDto.getUserId()));
         }
 
-        if (masterQueryDto.getUser_name() != null && !masterQueryDto.getUser_name().isEmpty()) {
-            predicates.add(cb.like(root.get("name"), "%" + masterQueryDto.getUser_name() + "%"));
+        if (queryDto.getEmail() != null && !queryDto.getEmail().isEmpty()) {
+            predicates.add(cb.like(root.get("email"), "%" + queryDto.getEmail() + "%"));
+        }
+
+        if (queryDto.getUserName() != null && !queryDto.getUserName().isEmpty()) {
+            predicates.add(cb.like(root.get("userName"), "%" + queryDto.getUserName() + "%"));
         }
 
         cq.where(predicates.toArray(new Predicate[0]));
 
-        if (masterQueryDto.getSortBy() != null) {
-            if ("desc".equalsIgnoreCase(masterQueryDto.getSortDirection())) {
-                cq.orderBy(cb.desc(root.get(masterQueryDto.getSortBy())));
+        // sorting
+        if (queryDto.getSortBy() != null) {
+            if ("desc".equalsIgnoreCase(queryDto.getSortDirection())) {
+                cq.orderBy(cb.desc(root.get(queryDto.getSortBy())));
             } else {
-                cq.orderBy(cb.asc(root.get(masterQueryDto.getSortBy())));
+                cq.orderBy(cb.asc(root.get(queryDto.getSortBy())));
             }
         }
 
         var query = entityManager.createQuery(cq);
 
-        if (masterQueryDto.getPageNo() != null && masterQueryDto.getPageSize() != null) {
-            int pageNo = masterQueryDto.getPageNo();
-            int pageSize = masterQueryDto.getPageSize();
-
-            query.setFirstResult(pageNo * pageSize); 
-            query.setMaxResults(pageSize);           
+        // pagination
+        if (queryDto.getPageNo() != null && queryDto.getPageSize() != null) {
+            query.setFirstResult(queryDto.getPageNo() * queryDto.getPageSize());
+            query.setMaxResults(queryDto.getPageSize());
         }
 
-        List<UserMaster> resultList = query.getResultList();
-
-        List<UserMasterDto> dtoList = new ArrayList<>();
-
-        for (UserMaster user : resultList) {
-            UserMasterDto dto = new UserMasterDto();
-            dto.setUser_id(user.getUser_id());
-            dto.setUser_name(user.getUser_name());
-            dto.setEmail(user.getEmail());
-            dto.setLicense_number(user.getLicense_number());
-            dto.setPhone_number(user.getPhone_number());
-            dto.setCreated_date(user.getCreated_date());
-            dto.setUpdated_date(user.getUpdated_date());
-            dto.setRole(user.getRole());
-            dtoList.add(dto);
-        }
-
-        return dtoList;
+        return query.getResultList().stream()
+                .map(this::mapToDto)
+                .toList();
     }
 
-	public List<UserMasterDto> updateUserMaster(@Valid List<UserMasterDto> userMasterDtos) {
-		
-		List<UserMasterDto> updatedList = new ArrayList<>();
+    // ================= UPDATE =================
+    public List<UserMasterDto> updateUserMaster(@Valid List<UserMasterDto> userDtos) {
 
-	    for (UserMasterDto dto : userMasterDtos) {
+        if (userDtos == null || userDtos.isEmpty()) {
+            throw new IllegalArgumentException("User list cannot be empty");
+        }
 
-	        if (dto.getUser_id() == null) {
-	            throw new RuntimeException("User ID is required for update");
-	        }
+        List<UserMasterDto> updatedList = new ArrayList<>();
 
-	        UserMaster user = userMasterDao.findById(dto.getUser_id())
-	                .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUser_id()));
+        for (UserMasterDto dto : userDtos) {
 
-	        if (dto.getUser_name() != null) {
-	            user.setUser_name(dto.getUser_name());
-	        }
+            if (dto.getUserId() == null) {
+                throw new RuntimeException("User ID is required for update");
+            }
 
-	        if (dto.getEmail() != null) {
-	            user.setEmail(dto.getEmail());
-	        }
-	        
-	        if (dto.getCreated_date() != null) {
-	            user.setCreated_date(dto.getCreated_date());
-	        }
-	        
-	        if (dto.getPhone_number() != null) {
-	            user.setPhone_number(dto.getPhone_number());
-	        }
-	        
-	        if (dto.getLicense_number() != null) {
-	            user.setLicense_number(dto.getLicense_number());
-	        }
-	        
-	        if (dto.getRole() != null) {
-	            user.setRole(dto.getRole());
-	        }
-	        
-	        if (dto.getUpdated_date() != null) {
-	            user.setUpdated_date(dto.getUpdated_date());
-	        }
+            UserMaster user = userMasterDao.findById(dto.getUserId())
+                    .orElseThrow(() -> new RuntimeException("User not found with id: " + dto.getUserId()));
 
-	        UserMaster savedUser = userMasterDao.save(user);
+            // update only non-null fields
+            if (dto.getUserName() != null) user.setUserName(dto.getUserName());
+            if (dto.getEmail() != null) user.setEmail(dto.getEmail());
+            if (dto.getPhoneNumber() != null) user.setPhoneNumber(dto.getPhoneNumber());
+            if (dto.getLicenseNumber() != null) user.setLicenseNumber(dto.getLicenseNumber());
+            if (dto.getRole() != null) user.setRole(dto.getRole());
+            if (dto.getCreatedDate() != null) user.setCreatedDate(dto.getCreatedDate());
+            if (dto.getUpdatedDate() != null) user.setUpdatedDate(dto.getUpdatedDate());
+            if (dto.getPassword() != null) user.setPassword(dto.getPassword());
 
-	        UserMasterDto updatedDto = new UserMasterDto();
-	        updatedDto.setUser_id(savedUser.getUser_id());
-	        updatedDto.setUser_name(savedUser.getUser_name());
-	        updatedDto.setEmail(savedUser.getEmail());
-	        updatedDto.setLicense_number(savedUser.getLicense_number());
-	        updatedDto.setPhone_number(savedUser.getPhone_number());
-	        updatedDto.setCreated_date(savedUser.getCreated_date());
-	        updatedDto.setUpdated_date(savedUser.getUpdated_date());
-	        updatedDto.setRole(savedUser.getRole());
+            UserMaster savedUser = userMasterDao.save(user);
 
-	        updatedList.add(updatedDto);
-	    }
+            updatedList.add(mapToDto(savedUser));
+        }
 
-	    return updatedList;
-		
-	}
-    
-    
-}	
+        return updatedList;
+    }
+
+    // ================= COMMON MAPPER =================
+
+    private UserMaster mapToEntity(UserMasterDto dto) {
+
+        UserMaster entity = new UserMaster();
+
+        entity.setUserId(dto.getUserId());
+        entity.setUserName(dto.getUserName());
+        entity.setEmail(dto.getEmail());
+        entity.setPhoneNumber(dto.getPhoneNumber());
+        entity.setLicenseNumber(dto.getLicenseNumber());
+        entity.setRole(dto.getRole());
+        entity.setCreatedDate(dto.getCreatedDate());
+        entity.setUpdatedDate(dto.getUpdatedDate());
+        entity.setPassword(dto.getPassword());
+
+        return entity;
+    }
+
+    private UserMasterDto mapToDto(UserMaster entity) {
+
+        UserMasterDto dto = new UserMasterDto();
+
+        dto.setUserId(entity.getUserId());
+        dto.setUserName(entity.getUserName());
+        dto.setEmail(entity.getEmail());
+        dto.setPhoneNumber(entity.getPhoneNumber());
+        dto.setLicenseNumber(entity.getLicenseNumber());
+        dto.setRole(entity.getRole());
+        dto.setCreatedDate(entity.getCreatedDate());
+        dto.setUpdatedDate(entity.getUpdatedDate());
+        dto.setPassword(entity.getPassword());
+
+        return dto;
+    }
+}

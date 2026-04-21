@@ -4,13 +4,13 @@ import com.epps.carrental.matsers.vehicle.entity.VEHICLE_TYPE;
 
 public class PriceMasterQuerydto {
 
-	private Integer price_id;
+	private Integer priceId;
 
-	private VEHICLE_TYPE vehicle_type;
+	private VEHICLE_TYPE vehicleType;
 	
-	private Boolean is_active;
+	private Boolean isActive;
 	
-	private Integer location_id;
+	private Integer locationId;
 	
     private Integer pageNo;
     
@@ -19,30 +19,6 @@ public class PriceMasterQuerydto {
     private String sortBy;
     
     private String sortDirection;
-
-	public Integer getPrice_id() {
-		return price_id;
-	}
-
-	public void setPrice_id(Integer price_id) {
-		this.price_id = price_id;
-	}
-
-	public VEHICLE_TYPE getVehicle_type() {
-		return vehicle_type;
-	}
-
-	public void setVehicle_type(VEHICLE_TYPE vehicle_type) {
-		this.vehicle_type = vehicle_type;
-	}
-
-	public Boolean getIs_active() {
-		return is_active;
-	}
-
-	public void setIs_active(Boolean is_active) {
-		this.is_active = is_active;
-	}
 
 	public Integer getPageNo() {
 		return pageNo;
@@ -76,11 +52,35 @@ public class PriceMasterQuerydto {
 		this.sortDirection = sortDirection;
 	}
 
-	public Integer getLocation_id() {
-		return location_id;
+	public Integer getPriceId() {
+		return priceId;
 	}
 
-	public void setLocation_id(Integer location_id) {
-		this.location_id = location_id;
+	public void setPriceId(Integer priceId) {
+		this.priceId = priceId;
+	}
+
+	public VEHICLE_TYPE getVehicleType() {
+		return vehicleType;
+	}
+
+	public void setVehicleType(VEHICLE_TYPE vehicleType) {
+		this.vehicleType = vehicleType;
+	}
+
+	public Boolean getIsActive() {
+		return isActive;
+	}
+
+	public void setIsActive(Boolean isActive) {
+		this.isActive = isActive;
+	}
+
+	public Integer getLocationId() {
+		return locationId;
+	}
+
+	public void setLocationId(Integer locationId) {
+		this.locationId = locationId;
 	} 
 }

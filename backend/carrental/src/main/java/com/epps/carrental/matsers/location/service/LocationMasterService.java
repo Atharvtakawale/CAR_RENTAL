@@ -3,7 +3,6 @@ package com.epps.carrental.matsers.location.service;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,299 +24,236 @@ import jakarta.validation.Valid;
 @Service
 public class LocationMasterService {
 
-	@Autowired
-	private LocationMasterDao locationMasterDao;
+    @Autowired
+    private LocationMasterDao locationMasterDao;	
 
-	@Autowired
-	private EntityManager entityManager;
+    @Autowired
+    private EntityManager entityManager;
 
-	public List<LocationMasterDto> saveLocationMaster(@Valid List<LocationMasterDto> locationMasterDtos) {
+    public List<LocationMasterDto> saveLocationMaster(@Valid List<LocationMasterDto> locationDtos) {
 
-		if (locationMasterDtos == null || locationMasterDtos.isEmpty()) {
-			throw new IllegalArgumentException("Location list cannot be empty");
-		}
-
-		List<LocationMaster> entityList = locationMasterDtos.stream().filter(dto -> dto != null).map(dto -> {
-
-			LocationMaster location = new LocationMaster();
-
-			BeanUtils.copyProperties(dto, location);
-
-			if (dto.getPriceMastersDtos() != null) {
-
-				List<PriceMaster> priceList = dto.getPriceMastersDtos().stream().map(priceDto -> {
-
-					PriceMaster price = new PriceMaster();
-					BeanUtils.copyProperties(priceDto, price);
-
-					price.setLocationMaster(location);
-
-					return price;
-				}).toList();
-
-				location.setPriceMasters(priceList);
-			}
-
-			return location;
-		}).toList();
-
-		List<LocationMaster> savedList = locationMasterDao.saveAll(entityList);
-
-		// Convert back to DTO
-		return savedList.stream().map(entity -> {
-
-			LocationMasterDto dto = new LocationMasterDto();
-			BeanUtils.copyProperties(entity, dto);
-
-			if (entity.getPriceMasters() != null) {
-
-				List<PriceMasterDto> priceDtos = entity.getPriceMasters().stream().map(price -> {
-
-					PriceMasterDto pDto = new PriceMasterDto();
-					BeanUtils.copyProperties(price, pDto);
-
-					return pDto;
-				}).toList();
-
-				dto.setPriceMastersDtos(priceDtos);
-			}
-
-			return dto;
-		}).toList();
-	}	
-
-	public long getLocationMasterDataCount(@Valid LocationMasterQueryDto masterQueryDto) {
-
-	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	    CriteriaQuery<Long> cq = cb.createQuery(Long.class);
-
-	    Root<LocationMaster> root = cq.from(LocationMaster.class);
-
-	    cq.select(cb.countDistinct(root)); // 🔥 use distinct (important for joins)
-
-	    List<Predicate> predicates = new ArrayList<>();
-
-	    if (masterQueryDto.getLocation_name() != null && !masterQueryDto.getLocation_name().isEmpty()) {
-	        predicates.add(cb.like(root.get("locationName"), "%" + masterQueryDto.getLocation_name() + "%"));
-	    }
-
-	    cq.where(predicates.toArray(new Predicate[0]));
-
-	    return entityManager.createQuery(cq).getSingleResult();
-	}
-
-	public List<LocationMasterDto> getLocationMasterDataList(@Valid LocationMasterQueryDto masterQueryDto) {
-
-	    CriteriaBuilder cb = entityManager.getCriteriaBuilder();
-	    CriteriaQuery<LocationMaster> cq = cb.createQuery(LocationMaster.class);
-
-	    Root<LocationMaster> root = cq.from(LocationMaster.class);
-
-	    root.fetch("priceMasters", JoinType.LEFT);
-
-	    List<Predicate> predicates = new ArrayList<>();
-
-	    if (masterQueryDto.getLocation_id() != null) {
-            predicates.add(cb.equal(root.get("location_id"), masterQueryDto.getLocation_id()));
+        if (locationDtos == null || locationDtos.isEmpty()) {
+            throw new IllegalArgumentException("Location list cannot be empty");
         }
-	    
-	    if (masterQueryDto.getLocation_name() != null && !masterQueryDto.getLocation_name().isEmpty()) {
-	        predicates.add(cb.like(root.get("locationName"), "%" + masterQueryDto.getLocation_name() + "%"));
-	    }
 
-	    cq.where(predicates.toArray(new Predicate[0]));
+        List<LocationMaster> entityList = new ArrayList<>();
 
-	    if (masterQueryDto.getSortBy() != null) {
-	        if ("desc".equalsIgnoreCase(masterQueryDto.getSortDirection())) {
-	            cq.orderBy(cb.desc(root.get(masterQueryDto.getSortBy())));
-	        } else {
-	            cq.orderBy(cb.asc(root.get(masterQueryDto.getSortBy())));
-	        }
-	    }
+        for (LocationMasterDto dto : locationDtos) {
 
-	    cq.distinct(true); // 🔥 VERY IMPORTANT (avoid duplicate rows)
+            LocationMaster location = new LocationMaster();
 
-	    var query = entityManager.createQuery(cq);
+            location.setLocationName(dto.getLocationName());
+            location.setAddressLine1(dto.getAddressLine1());
+            location.setAddressLine2(dto.getAddressLine2());
+            location.setCity(dto.getCity());
+            location.setState(dto.getState());
+            location.setCountry(dto.getCountry());
+            location.setPincode(dto.getPincode());
+            location.setIsActive(dto.getIsActive());
+            location.setCreatedDate(dto.getCreatedDate());
+            location.setUpdatedDate(dto.getUpdatedDate());
 
-	    if (masterQueryDto.getPageNo() != null && masterQueryDto.getPageSize() != null) {
-	        int pageNo = masterQueryDto.getPageNo();
-	        int pageSize = masterQueryDto.getPageSize();
+            if (dto.getPriceMastersDtos() != null && !dto.getPriceMastersDtos().isEmpty()) {
 
-	        query.setFirstResult(pageNo * pageSize);
-	        query.setMaxResults(pageSize);
-	    }
+                List<PriceMaster> priceList = new ArrayList<>();
 
-	    List<LocationMaster> resultList = query.getResultList();
+                for (PriceMasterDto priceDto : dto.getPriceMastersDtos()) {
 
-	    List<LocationMasterDto> dtoList = new ArrayList<>();
+                    PriceMaster price = new PriceMaster();
 
-	    for (LocationMaster location : resultList) {
+                    price.setVehicleType(priceDto.getVehicleType());
+                    price.setBasePricePerDay(priceDto.getBasePricePerDay());
+                    price.setPricePerHour(priceDto.getPricePerHour());
+                    price.setWeekendPrice(priceDto.getWeekendPrice());
+                    price.setHolidayPrice(priceDto.getHolidayPrice());
+                    price.setSecurityDeposit(priceDto.getSecurityDeposit());
+                    price.setIsActive(priceDto.getIsActive());
+                    price.setCreatedDate(priceDto.getCreatedDate());
+                    price.setUpdatedDate(priceDto.getUpdatedDate());
 
-	        LocationMasterDto dto = new LocationMasterDto();
+                    price.setLocationMaster(location);
 
-	        dto.setLocation_id(location.getLocation_id());
-	        dto.setLocation_name(location.getLocation_name());
-	        dto.setAddress_line1(location.getAddress_line1());
-	        dto.setAddress_line2(location.getAddress_line2());
-	        dto.setCity(location.getCity());
-	        dto.setState(location.getState());
-	        dto.setCountry(location.getCountry());
-	        dto.setPincode(location.getPincode());
-	        dto.setIs_active(location.getIs_active());
-	        dto.setCreated_date(location.getCreated_date());
-	        dto.setUpdated_date(location.getUpdated_date());
+                    priceList.add(price);
+                }
 
-	        if (location.getPriceMasters() != null) {
+                location.setPriceMasters(priceList);
+            }
 
-	            List<PriceMasterDto> priceDtos = location.getPriceMasters().stream()
-	                    .map(price -> {
-	                        PriceMasterDto pDto = new PriceMasterDto();
+            entityList.add(location);
+        }
 
-	                        pDto.setPrice_id(price.getPrice_id());
-	                        pDto.setVehicle_type(price.getVehicle_type());
-	                        pDto.setBase_price_per_day(price.getBase_price_per_day());
-	                        pDto.setPrice_per_hour(price.getPrice_per_hour());
-	                        pDto.setWeekend_price(price.getWeekend_price());
-	                        pDto.setHoliday_price(price.getHoliday_price());
-	                        pDto.setSecurity_deposit(price.getSecurity_deposit());
-	                        pDto.setIs_active(price.getIs_active());
+        List<LocationMaster> savedList = locationMasterDao.saveAll(entityList);
 
-	                        return pDto;
-	                    })
-	                    .toList();
+        return mapToDtoList(savedList);
+    }
 
-	            dto.setPriceMastersDtos(priceDtos);
-	        }
+    public long getLocationMasterDataCount(@Valid LocationMasterQueryDto queryDto) {
 
-	        dtoList.add(dto);
-	    }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> cq = cb.createQuery(Long.class);
 
-	    return dtoList;
-	}
+        Root<LocationMaster> root = cq.from(LocationMaster.class);
 
-	public List<LocationMasterDto> updateLocationMaster(List<LocationMasterDto> locationDtos) {
+        cq.select(cb.countDistinct(root));
 
-	    List<LocationMasterDto> updatedList = new ArrayList<>();
+        List<Predicate> predicates = new ArrayList<>();
 
-	    for (LocationMasterDto dto : locationDtos) {
+        if (queryDto.getLocationName() != null && !queryDto.getLocationName().isEmpty()) {
+            predicates.add(cb.like(root.get("locationName"), "%" + queryDto.getLocationName() + "%"));
+        }
 
-	        if (dto.getLocation_id() == null) {
-	            throw new RuntimeException("Location ID is required for update");
-	        }
+        cq.where(predicates.toArray(new Predicate[0]));
 
-	        LocationMaster location = locationMasterDao.findById(dto.getLocation_id())
-	                .orElseThrow(() -> new RuntimeException(
-	                        "Location not found with id: " + dto.getLocation_id()));
+        return entityManager.createQuery(cq).getSingleResult();
+    }
 
-	        if (dto.getLocation_name() != null) {
-	            location.setLocation_name(dto.getLocation_name());
-	        }
+    public List<LocationMasterDto> getLocationMasterDataList(@Valid LocationMasterQueryDto queryDto) {
 
-	        if (dto.getAddress_line1() != null) {
-	            location.setAddress_line1(dto.getAddress_line1());
-	        }
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaQuery<LocationMaster> cq = cb.createQuery(LocationMaster.class);
 
-	        if (dto.getAddress_line2() != null) {
-	            location.setAddress_line2(dto.getAddress_line2());
-	        }
+        Root<LocationMaster> root = cq.from(LocationMaster.class);
 
-	        if (dto.getCity() != null) {
-	            location.setCity(dto.getCity());
-	        }
+        root.fetch("priceMasters", JoinType.LEFT);
 
-	        if (dto.getState() != null) {
-	            location.setState(dto.getState());
-	        }
+        List<Predicate> predicates = new ArrayList<>();
 
-	        if (dto.getCountry() != null) {
-	            location.setCountry(dto.getCountry());
-	        }
+        if (queryDto.getLocationId() != null) {
+            predicates.add(cb.equal(root.get("locationId"), queryDto.getLocationId()));
+        }
 
-	        if (dto.getPincode() != null) {
-	            location.setPincode(dto.getPincode());
-	        }
+        if (queryDto.getLocationName() != null && !queryDto.getLocationName().isEmpty()) {
+            predicates.add(cb.like(root.get("locationName"), "%" + queryDto.getLocationName() + "%"));
+        }
 
-	        if (dto.getIs_active() != null) {
-	            location.setIs_active(dto.getIs_active());
-	        }
+        cq.where(predicates.toArray(new Predicate[0]));
+        cq.distinct(true);
 
-	        if (dto.getUpdated_date() != null) {
-	            location.setUpdated_date(dto.getUpdated_date());
-	        }
+        if (queryDto.getSortBy() != null) {
+            if ("desc".equalsIgnoreCase(queryDto.getSortDirection())) {
+                cq.orderBy(cb.desc(root.get(queryDto.getSortBy())));
+            } else {
+                cq.orderBy(cb.asc(root.get(queryDto.getSortBy())));
+            }
+        }
 
-	        if (dto.getPriceMastersDtos() != null) {
+        var query = entityManager.createQuery(cq);
 
-	            location.getPriceMasters().clear();
+        if (queryDto.getPageNo() != null && queryDto.getPageSize() != null) {
+            query.setFirstResult(queryDto.getPageNo() * queryDto.getPageSize());
+            query.setMaxResults(queryDto.getPageSize());
+        }
 
-	            List<PriceMaster> newPriceList = new ArrayList<>();
+        return mapToDtoList(query.getResultList());
+    }
 
-	            for (PriceMasterDto priceDto : dto.getPriceMastersDtos()) {
+    public List<LocationMasterDto> updateLocationMaster(List<LocationMasterDto> locationDtos) {
 
-	                PriceMaster price = new PriceMaster();
+        List<LocationMasterDto> updatedList = new ArrayList<>();
 
-	                price.setPrice_id(priceDto.getPrice_id());
-	                price.setVehicle_type(priceDto.getVehicle_type());
-	                price.setBase_price_per_day(priceDto.getBase_price_per_day());
-	                price.setPrice_per_hour(priceDto.getPrice_per_hour());
-	                price.setWeekend_price(priceDto.getWeekend_price());
-	                price.setHoliday_price(priceDto.getHoliday_price());
-	                price.setSecurity_deposit(priceDto.getSecurity_deposit());
-	                price.setIs_active(priceDto.getIs_active());
-	                price.setCreated_date(priceDto.getCreated_date());
-	                price.setUpdated_date(priceDto.getUpdated_date());
+        for (LocationMasterDto dto : locationDtos) {
 
-	                price.setLocationMaster(location);
+            if (dto.getLocationId() == null) {
+                throw new RuntimeException("Location ID is required");
+            }
 
-	                newPriceList.add(price);
-	            }
+            LocationMaster location = locationMasterDao.findById(dto.getLocationId())
+                    .orElseThrow(() -> new RuntimeException("Location not found"));
 
-	            location.setPriceMasters(newPriceList);
-	        }
+            if (dto.getLocationName() != null) location.setLocationName(dto.getLocationName());
+            if (dto.getAddressLine1() != null) location.setAddressLine1(dto.getAddressLine1());
+            if (dto.getAddressLine2() != null) location.setAddressLine2(dto.getAddressLine2());
+            if (dto.getCity() != null) location.setCity(dto.getCity());
+            if (dto.getState() != null) location.setState(dto.getState());
+            if (dto.getCountry() != null) location.setCountry(dto.getCountry());
+            if (dto.getPincode() != null) location.setPincode(dto.getPincode());
+            if (dto.getIsActive() != null) location.setIsActive(dto.getIsActive());
+            if (dto.getUpdatedDate() != null) location.setUpdatedDate(dto.getUpdatedDate());
 
-	        LocationMaster savedLocation = locationMasterDao.save(location);
+            if (dto.getPriceMastersDtos() != null) {
 
-	        LocationMasterDto updatedDto = new LocationMasterDto();
+                location.getPriceMasters().clear();
 
-	        updatedDto.setLocation_id(savedLocation.getLocation_id());
-	        updatedDto.setLocation_name(savedLocation.getLocation_name());
-	        updatedDto.setAddress_line1(savedLocation.getAddress_line1());
-	        updatedDto.setAddress_line2(savedLocation.getAddress_line2());
-	        updatedDto.setCity(savedLocation.getCity());
-	        updatedDto.setState(savedLocation.getState());
-	        updatedDto.setCountry(savedLocation.getCountry());
-	        updatedDto.setPincode(savedLocation.getPincode());
-	        updatedDto.setIs_active(savedLocation.getIs_active());
-	        updatedDto.setCreated_date(savedLocation.getCreated_date());
-	        updatedDto.setUpdated_date(savedLocation.getUpdated_date());
+                List<PriceMaster> newList = new ArrayList<>();
 
-	        if (savedLocation.getPriceMasters() != null) {
+                for (PriceMasterDto priceDto : dto.getPriceMastersDtos()) {
 
-	            List<PriceMasterDto> priceDtos = savedLocation.getPriceMasters().stream()
-	                    .map(price -> {
-	                        PriceMasterDto pDto = new PriceMasterDto();
+                    PriceMaster price = new PriceMaster();
 
-	                        pDto.setPrice_id(price.getPrice_id());
-	                        pDto.setVehicle_type(price.getVehicle_type());
-	                        pDto.setBase_price_per_day(price.getBase_price_per_day());
-	                        pDto.setPrice_per_hour(price.getPrice_per_hour());
-	                        pDto.setWeekend_price(price.getWeekend_price());
-	                        pDto.setHoliday_price(price.getHoliday_price());
-	                        pDto.setSecurity_deposit(price.getSecurity_deposit());
-	                        pDto.setIs_active(price.getIs_active());
-	                        pDto.setCreated_date(price.getCreated_date());
-	                        pDto.setUpdated_date(price.getUpdated_date());
+                    price.setPriceId(priceDto.getPriceId());
+                    price.setVehicleType(priceDto.getVehicleType());
+                    price.setBasePricePerDay(priceDto.getBasePricePerDay());
+                    price.setPricePerHour(priceDto.getPricePerHour());
+                    price.setWeekendPrice(priceDto.getWeekendPrice());
+                    price.setHolidayPrice(priceDto.getHolidayPrice());
+                    price.setSecurityDeposit(priceDto.getSecurityDeposit());
+                    price.setIsActive(priceDto.getIsActive());
+                    price.setCreatedDate(priceDto.getCreatedDate());
+                    price.setUpdatedDate(priceDto.getUpdatedDate());
 
-	                        return pDto;
-	                    })
-	                    .toList();
+                    price.setLocationMaster(location);
 
-	            updatedDto.setPriceMastersDtos(priceDtos);
-	        }
+                    newList.add(price);
+                }
 
-	        updatedList.add(updatedDto);
-	    }
+                location.setPriceMasters(newList);
+            }
 
-	    return updatedList;
-	}
+            LocationMaster saved = locationMasterDao.save(location);
 
+            updatedList.add(mapToDto(saved));
+        }
+
+        return updatedList;
+    }
+
+    // ================= COMMON MAPPER =================
+
+    private List<LocationMasterDto> mapToDtoList(List<LocationMaster> list) {
+        return list.stream().map(this::mapToDto).toList();
+    }
+
+    private LocationMasterDto mapToDto(LocationMaster location) {
+
+        LocationMasterDto dto = new LocationMasterDto();
+
+        dto.setLocationId(location.getLocationId());
+        dto.setLocationName(location.getLocationName());
+        dto.setAddressLine1(location.getAddressLine1());
+        dto.setAddressLine2(location.getAddressLine2());
+        dto.setCity(location.getCity());
+        dto.setState(location.getState());
+        dto.setCountry(location.getCountry());
+        dto.setPincode(location.getPincode());
+        dto.setIsActive(location.getIsActive());
+        dto.setCreatedDate(location.getCreatedDate());
+        dto.setUpdatedDate(location.getUpdatedDate());
+
+        if (location.getPriceMasters() != null) {
+
+            List<PriceMasterDto> priceDtos = location.getPriceMasters().stream().map(price -> {
+
+                PriceMasterDto p = new PriceMasterDto();
+
+                p.setPriceId(price.getPriceId());
+                p.setVehicleType(price.getVehicleType());
+                p.setBasePricePerDay(price.getBasePricePerDay());
+                p.setPricePerHour(price.getPricePerHour());
+                p.setWeekendPrice(price.getWeekendPrice());
+                p.setHolidayPrice(price.getHolidayPrice());
+                p.setSecurityDeposit(price.getSecurityDeposit());
+                p.setIsActive(price.getIsActive());
+                p.setCreatedDate(price.getCreatedDate());
+                p.setUpdatedDate(price.getUpdatedDate());
+
+                return p;
+
+            }).toList();
+
+            dto.setPriceMastersDtos(priceDtos);
+        }
+
+        return dto;
+    }
 }
+

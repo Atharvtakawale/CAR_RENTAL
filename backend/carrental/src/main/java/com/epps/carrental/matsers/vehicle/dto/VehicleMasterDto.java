@@ -5,28 +5,33 @@ import java.time.LocalDate;
 import com.epps.carrental.matsers.vehicle.entity.FUEL_TYPE;
 import com.epps.carrental.matsers.vehicle.entity.VEHICLE_TYPE;
 
-public class VehicleMasterDto {
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
-	private Integer vehicle_id;
+public class VehicleMasterDto {
+	
+	private Integer vehicleId;
 
 	private String model;
 
-	private VEHICLE_TYPE type;
+	@Enumerated(EnumType.STRING)
+	private VEHICLE_TYPE vehicleType;
 
-	private FUEL_TYPE fuel_TYPE;
-	
-	private Integer seating_capacity;
-	
-	private LocalDate created_date;
-	
-	private LocalDate updated_date;
+	@Enumerated(EnumType.STRING)
+	private FUEL_TYPE fuelType;
 
-	public Integer getVehicle_id() {
-		return vehicle_id;
+	private Integer seatingCapacity;
+
+	private LocalDate createdDate;
+
+	private LocalDate updatedDate;
+
+	public Integer getVehicleId() {
+		return vehicleId;
 	}
 
-	public void setVehicle_id(Integer vehicle_id) {
-		this.vehicle_id = vehicle_id;
+	public void setVehicleId(Integer vehicleId) {
+		this.vehicleId = vehicleId;
 	}
 
 	public String getModel() {
@@ -37,44 +42,44 @@ public class VehicleMasterDto {
 		this.model = model;
 	}
 
-	public VEHICLE_TYPE getType() {
-		return type;
+	public VEHICLE_TYPE getVehicleType() {
+		return vehicleType;
 	}
 
-	public void setType(VEHICLE_TYPE type) {
-		this.type = type;
+	public void setVehicleType(VEHICLE_TYPE vehicleType) {
+		this.vehicleType = vehicleType;
 	}
 
-	public FUEL_TYPE getFuel_TYPE() {
-		return fuel_TYPE;
+	public FUEL_TYPE getFuelType() {
+		return fuelType;
 	}
 
-	public void setFuel_TYPE(FUEL_TYPE fuel_TYPE) {
-		this.fuel_TYPE = fuel_TYPE;
+	public void setFuelType(FUEL_TYPE fuelType) {
+		this.fuelType = fuelType;
 	}
 
-	public LocalDate getCreated_date() {
-		return created_date;
+	public Integer getSeatingCapacity() {
+		return seatingCapacity;
 	}
 
-	public void setCreated_date(LocalDate created_date) {
-		this.created_date = created_date;
+	public void setSeatingCapacity(Integer seatingCapacity) {
+		this.seatingCapacity = seatingCapacity;
 	}
 
-	public LocalDate getUpdated_date() {
-		return updated_date;
+	public LocalDate getCreatedDate() {
+		return createdDate;
 	}
 
-	public void setUpdated_date(LocalDate updated_date) {
-		this.updated_date = updated_date;
+	public void setCreatedDate(LocalDate createdDate) {
+		this.createdDate = createdDate;
 	}
 
-	public Integer getSeating_capacity() {
-		return seating_capacity;
+	public LocalDate getUpdatedDate() {
+		return updatedDate;
 	}
 
-	public void setSeating_capacity(Integer seating_capacity) {
-		this.seating_capacity = seating_capacity;
+	public void setUpdatedDate(LocalDate updatedDate) {
+		this.updatedDate = updatedDate;
 	}
 
 }

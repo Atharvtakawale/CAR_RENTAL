@@ -1,10 +1,18 @@
 package com.epps.carrental.matsers.vehicle.dto;
 
+import com.epps.carrental.matsers.vehicle.entity.VEHICLE_TYPE;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+
 public class VehicleMasterQueryDto {
 
-	private Integer vehicle_id;
+	private Integer vehicleId;
 
 	private String model;
+	
+	@Enumerated(EnumType.STRING)
+	private VEHICLE_TYPE vehicleType;
 	
     private Integer pageNo;
     
@@ -13,14 +21,6 @@ public class VehicleMasterQueryDto {
     private String sortBy;
     
     private String sortDirection; 
-
-	public Integer getVehicle_id() {
-		return vehicle_id;
-	}
-
-	public void setVehicle_id(Integer vehicle_id) {
-		this.vehicle_id = vehicle_id;
-	}
 
 	public String getModel() {
 		return model;
@@ -60,5 +60,21 @@ public class VehicleMasterQueryDto {
 
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
+	}
+
+	public Integer getVehicleId() {
+		return vehicleId;
+	}
+
+	public void setVehicleId(Integer vehicleId) {
+		this.vehicleId = vehicleId;
+	}
+
+	public VEHICLE_TYPE getVehicleType() {
+		return vehicleType;
+	}
+
+	public void setVehicleType(VEHICLE_TYPE vehicleType) {
+		this.vehicleType = vehicleType;
 	}
 }

@@ -9,139 +9,153 @@ import org.hibernate.annotations.DynamicUpdate;
 import com.epps.carrental.matsers.price.entity.PriceMaster;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
+	
 @Entity
 @DynamicInsert
 @DynamicUpdate
-@Table(name = "loction_mst")
+@Table(name = "location_mst")
 public class LocationMaster {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Integer location_id;
-	
-	private String location_name;
-	
-	private String address_line1;
-	
-	private String address_line2;
-	
-	private String city;
-	
-	private String state;
-	
-	private String country;
-	
-	private String pincode;
-	
-	private Integer is_active;
-	
-	private LocalDate created_date;
-	
-	private LocalDate updated_date;
-	
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "location_id")
+    private Integer locationId;
+
+    @Column(name = "location_name")
+    private String locationName;
+
+    @Column(name = "address_line1")
+    private String addressLine1;
+
+    @Column(name = "address_line2")
+    private String addressLine2;
+
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "state")
+    private String state;
+
+    @Column(name = "country")
+    private String country;
+
+    @Column(name = "pincode")
+    private String pincode;
+
+    @Column(name = "is_active")
+    private Integer isActive;
+
+    @Column(name = "created_date")
+    private LocalDate createdDate;
+
+    @Column(name = "updated_date")
+    private LocalDate updatedDate;
+
     @OneToMany(mappedBy = "locationMaster", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PriceMaster> priceMasters;
 
-	public Integer getLocation_id() {
-		return location_id;
-	}
+    // ================= GETTERS & SETTERS =================
 
-	public void setLocation_id(Integer location_id) {
-		this.location_id = location_id;
-	}
+    public Integer getLocationId() {
+        return locationId;
+    }
 
-	public String getLocation_name() {
-		return location_name;
-	}
+    public void setLocationId(Integer locationId) {
+        this.locationId = locationId;
+    }
 
-	public void setLocation_name(String location_name) {
-		this.location_name = location_name;
-	}
+    public String getLocationName() {
+        return locationName;
+    }
 
-	public String getAddress_line1() {
-		return address_line1;
-	}
+    public void setLocationName(String locationName) {
+        this.locationName = locationName;
+    }
 
-	public void setAddress_line1(String address_line1) {
-		this.address_line1 = address_line1;
-	}
+    public String getAddressLine1() {
+        return addressLine1;
+    }
 
-	public String getAddress_line2() {
-		return address_line2;
-	}
+    public void setAddressLine1(String addressLine1) {
+        this.addressLine1 = addressLine1;
+    }
 
-	public void setAddress_line2(String address_line2) {
-		this.address_line2 = address_line2;
-	}
+    public String getAddressLine2() {
+        return addressLine2;
+    }
 
-	public String getCity() {
-		return city;
-	}
+    public void setAddressLine2(String addressLine2) {
+        this.addressLine2 = addressLine2;
+    }
 
-	public void setCity(String city) {
-		this.city = city;
-	}
+    public String getCity() {
+        return city;
+    }
 
-	public String getState() {
-		return state;
-	}
+    public void setCity(String city) {
+        this.city = city;
+    }
 
-	public void setState(String state) {
-		this.state = state;
-	}
+    public String getState() {
+        return state;
+    }
 
-	public String getCountry() {
-		return country;
-	}
+    public void setState(String state) {
+        this.state = state;
+    }
 
-	public void setCountry(String country) {
-		this.country = country;
-	}
+    public String getCountry() {
+        return country;
+    }
 
-	public String getPincode() {
-		return pincode;
-	}
+    public void setCountry(String country) {
+        this.country = country;
+    }
 
-	public void setPincode(String pincode) {
-		this.pincode = pincode;
-	}
+    public String getPincode() {
+        return pincode;
+    }
 
-	public Integer getIs_active() {
-		return is_active;
-	}
+    public void setPincode(String pincode) {
+        this.pincode = pincode;
+    }
 
-	public void setIs_active(Integer is_active) {
-		this.is_active = is_active;
-	}
+    public Integer getIsActive() {
+        return isActive;
+    }
 
-	public LocalDate getCreated_date() {
-		return created_date;
-	}
+    public void setIsActive(Integer isActive) {
+        this.isActive = isActive;
+    }
 
-	public void setCreated_date(LocalDate created_date) {
-		this.created_date = created_date;
-	}
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
 
-	public LocalDate getUpdated_date() {
-		return updated_date;
-	}
+    public void setCreatedDate(LocalDate createdDate) {
+        this.createdDate = createdDate;
+    }
 
-	public void setUpdated_date(LocalDate updated_date) {
-		this.updated_date = updated_date;
-	}
+    public LocalDate getUpdatedDate() {
+        return updatedDate;
+    }
 
-	public List<PriceMaster> getPriceMasters() {
-		return priceMasters;
-	}
+    public void setUpdatedDate(LocalDate updatedDate) {
+        this.updatedDate = updatedDate;
+    }
 
-	public void setPriceMasters(List<PriceMaster> priceMasters) {
-		this.priceMasters = priceMasters;
-	}
+    public List<PriceMaster> getPriceMasters() {
+        return priceMasters;
+    }
+
+    public void setPriceMasters(List<PriceMaster> priceMasters) {
+        this.priceMasters = priceMasters;
+    }
 }

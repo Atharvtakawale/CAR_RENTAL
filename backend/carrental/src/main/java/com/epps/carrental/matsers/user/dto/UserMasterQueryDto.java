@@ -2,9 +2,9 @@ package com.epps.carrental.matsers.user.dto;
 
 public class UserMasterQueryDto {
 
-	private Integer user_id;
+	private Integer userId;	
 
-	private String user_name;
+	private String userName;
 
 	private String email;
 	
@@ -15,30 +15,6 @@ public class UserMasterQueryDto {
     private String sortBy;
     
     private String sortDirection; 
-
-	public Integer getUser_id() {
-		return user_id;
-	}
-
-	public void setUser_id(Integer user_id) {
-		this.user_id = user_id;
-	}
-
-	public String getUser_name() {
-		return user_name;
-	}
-
-	public void setUser_name(String user_name) {
-		this.user_name = user_name;
-	}
-
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
 
 	public Integer getPageNo() {
 		return pageNo;
@@ -70,5 +46,29 @@ public class UserMasterQueryDto {
 
 	public void setSortDirection(String sortDirection) {
 		this.sortDirection = sortDirection;
+	}
+
+	public Integer getUserId() {
+		return userId;
+	}
+
+	public void setUserId(Integer userId) {
+		this.userId = userId;
+	}
+
+	public String getUserName() {
+		return userName;
+	}
+
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
 	}
 }

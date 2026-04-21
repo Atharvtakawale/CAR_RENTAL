@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.epps.carrental.matsers.user.dto.UserMasterQueryDto;
 import com.epps.carrental.matsers.vehicle.dto.VehicleMasterDto;
 import com.epps.carrental.matsers.vehicle.dto.VehicleMasterQueryDto;
 import com.epps.carrental.matsers.vehicle.service.VehicleMasterService;
